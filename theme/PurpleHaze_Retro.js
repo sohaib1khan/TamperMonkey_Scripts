@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Purple Haze — Galaxy Build
 // @namespace    https://github.com/sohaib1khan/TamperMonkey_Scripts.git
-// @version      0.2.3
-// @description  Galaxy-inspired skin: nebula drift, twinkling starfield, purposeful shooting stars, framed images, high-contrast readable text, orange-green bird cursor with wing-flap and red-gray idle smoke, double-tap Up/Down auto-scroll. Toggle on/off with Ctrl+Alt+M.
+// @version      0.3.1
+// @description  Galaxy-inspired skin: nebula drift, twinkling starfield, shooting stars, framed images, high-contrast text, Goku-style hero cursor, big slow fireball on link/button click, red-gray idle smoke, double-tap Up/Down auto-scroll. Toggle on/off with Ctrl+Alt+M.
 // @author       Sohaib Khan
 // @match        *://*/*
 // @run-at       document-start
@@ -18,9 +18,9 @@
   const CYAN = '#2de2ff';
   const LAVENDER = '#ecdcff';
   const DEEP = '#0a0014';
-  const BIRD_ORANGE = '#ff8a00';
-  const BIRD_GREEN = '#22c55e';
-  const BIRD_GREEN_DARK = '#15803d';
+  const GOKU_ORANGE = '#f97316';
+  const GOKU_BLUE = '#2563eb';
+  const GOKU_SKIN = '#ffcc99';
   const SHOOT_INTERVAL = 4200;
   const SHOOT_VARIANCE = 2800;
   const AUTO_SCROLL_PX = 3;
@@ -33,14 +33,19 @@
   let galaxyEl = null, nebulaEl = null, starsEl = null, scanEl = null;
   let shootTimer = null;
 
-  const BIRD_SVG =
-    '<svg width="36" height="28" viewBox="0 0 36 28" xmlns="http://www.w3.org/2000/svg">' +
-      '<g class="bird-body">' +
-        '<path d="M6 14 C10 8 16 6 22 8 C26 9 29 12 30 14 C29 16 26 19 22 20 C16 22 10 20 6 14 Z" fill="' + BIRD_ORANGE + '" stroke="#fff" stroke-width="0.6"/>' +
-        '<circle cx="24" cy="12" r="1.2" fill="#fff"/>' +
-        '<path class="bird-wing bird-wing-l" d="M14 14 C10 10 6 8 2 10 C5 12 8 14 14 14 Z" fill="' + BIRD_GREEN + '" stroke="#fff" stroke-width="0.4"/>' +
-        '<path class="bird-wing bird-wing-r" d="M18 14 C22 10 28 8 34 10 C30 12 26 14 18 14 Z" fill="' + BIRD_GREEN + '" stroke="#fff" stroke-width="0.4"/>' +
-        '<path d="M30 14 L34 13 L34 15 Z" fill="' + BIRD_GREEN_DARK + '"/>' +
+  const HERO_SVG =
+    '<svg width="32" height="40" viewBox="0 0 32 40" xmlns="http://www.w3.org/2000/svg">' +
+      '<g class="hero-body">' +
+        '<path class="hero-hair" d="M7 11 L3 3 L11 9 L9 1 L16 8 L23 1 L21 9 L29 3 L25 11 L31 15 L19 13 L16 19 L13 13 L1 15 Z" fill="#141414" stroke="#2a2a2a" stroke-width="0.35"/>' +
+        '<ellipse cx="16" cy="16" rx="7" ry="8" fill="' + GOKU_SKIN + '"/>' +
+        '<ellipse cx="13" cy="15.5" rx="1.4" ry="1.8" fill="#111"/>' +
+        '<ellipse cx="19" cy="15.5" rx="1.4" ry="1.8" fill="#111"/>' +
+        '<path d="M14 19 Q16 20.5 18 19" fill="none" stroke="#c4845c" stroke-width="0.6" stroke-linecap="round"/>' +
+        '<path d="M7 22 Q16 20 25 22 L27 38 L5 38 Z" fill="' + GOKU_ORANGE + '" stroke="#fff" stroke-width="0.35"/>' +
+        '<path d="M12 22 L16 29 L20 22 Z" fill="' + GOKU_BLUE + '"/>' +
+        '<rect x="6" y="30" width="20" height="3" rx="1" fill="#1d4ed8"/>' +
+        '<path class="hero-arm" d="M25 22 Q31 17 32 24 Q28 27 24 27 Z" fill="' + GOKU_SKIN + '"/>' +
+        '<circle class="hero-aura" cx="16" cy="24" r="8" fill="none" stroke="#ffeb3b" stroke-width="1.5" opacity="0"/>' +
       '</g>' +
     '</svg>';
 
@@ -223,7 +228,7 @@
       98% { opacity: 0.42; }
     }
 
-    /* ---- flying bird cursor ---- */
+    /* ---- Goku-style hero cursor ---- */
     *, *::before, *::after { cursor: none !important; }
     input, textarea, [contenteditable] { cursor: text !important; }
 
@@ -232,58 +237,85 @@
       pointer-events: none; will-change: transform;
     }
     #__phz_cursor .glyph {
-      display: block; width: 36px; height: 28px;
+      display: block; width: 32px; height: 40px;
       transform: translate(-50%, -50%);
-      filter: drop-shadow(0 0 8px rgba(255, 138, 0, 0.9));
-      animation: __phz_bird_glide 2.4s ease-in-out infinite;
+      filter: drop-shadow(0 0 8px rgba(249, 115, 22, 0.9));
+      animation: __phz_hero_glide 2.4s ease-in-out infinite;
     }
-    #__phz_cursor .bird-wing-l {
-      transform-origin: 14px 14px;
-      animation: __phz_wing_l 0.55s ease-in-out infinite;
-    }
-    #__phz_cursor .bird-wing-r {
-      transform-origin: 22px 14px;
-      animation: __phz_wing_r 0.55s ease-in-out infinite;
-    }
-    @keyframes __phz_wing_l {
-      0%, 100% { transform: rotate(0deg) scaleY(1); }
-      50%      { transform: rotate(-22deg) scaleY(0.82); }
-    }
-    @keyframes __phz_wing_r {
-      0%, 100% { transform: rotate(0deg) scaleY(1); }
-      50%      { transform: rotate(22deg) scaleY(0.82); }
-    }
-    @keyframes __phz_bird_glide {
-      0%, 100% { transform: translate(-50%, -50%) translateY(0) rotate(-4deg); }
-      50%      { transform: translate(-50%, -50%) translateY(-3px) rotate(4deg); }
+    @keyframes __phz_hero_glide {
+      0%, 100% { transform: translate(-50%, -50%) translateY(0) rotate(-3deg); }
+      50%      { transform: translate(-50%, -50%) translateY(-3px) rotate(3deg); }
     }
 
     #__phz_cursor.__phz_active .glyph {
-      animation: __phz_bird_dive 0.7s ease-in-out infinite;
-      filter: drop-shadow(0 0 14px rgba(34, 197, 94, 0.95)) drop-shadow(0 0 6px rgba(255, 138, 0, 0.85));
+      animation: __phz_hero_power 0.75s ease-in-out infinite;
+      filter: drop-shadow(0 0 14px rgba(255, 235, 59, 0.95)) drop-shadow(0 0 8px rgba(249, 115, 22, 0.9));
     }
-    #__phz_cursor.__phz_active .bird-wing-l { animation: __phz_wing_l_fast 0.28s ease-in-out infinite; }
-    #__phz_cursor.__phz_active .bird-wing-r { animation: __phz_wing_r_fast 0.28s ease-in-out infinite; }
-    @keyframes __phz_wing_l_fast {
-      0%, 100% { transform: rotate(0deg) scaleY(1); }
-      50%      { transform: rotate(-32deg) scaleY(0.7); }
+    #__phz_cursor.__phz_active .hero-arm {
+      transform-origin: 24px 24px;
+      animation: __phz_hero_charge 0.45s ease-in-out infinite;
     }
-    @keyframes __phz_wing_r_fast {
-      0%, 100% { transform: rotate(0deg) scaleY(1); }
-      50%      { transform: rotate(32deg) scaleY(0.7); }
+    #__phz_cursor.__phz_active .hero-aura {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: __phz_hero_aura 0.75s ease-in-out infinite;
     }
-    @keyframes __phz_bird_dive {
-      0%, 100% { transform: translate(-50%, -50%) scale(1.15) rotate(-8deg); }
-      50%      { transform: translate(-50%, -50%) scale(1.25) rotate(8deg) translateY(-5px); }
+    @keyframes __phz_hero_power {
+      0%, 100% { transform: translate(-50%, -50%) scale(1.1) rotate(-4deg); }
+      50%      { transform: translate(-50%, -50%) scale(1.2) rotate(4deg) translateY(-4px); }
+    }
+    @keyframes __phz_hero_charge {
+      0%, 100% { transform: rotate(0deg) translate(0, 0); }
+      50%      { transform: rotate(-18deg) translate(-2px, -1px); }
+    }
+    @keyframes __phz_hero_aura {
+      0%, 100% { transform: scale(0); opacity: 0; }
+      50%      { transform: scale(1); opacity: 0.55; }
     }
 
     #__phz_cursor.__phz_idle:not(.__phz_active) .glyph {
-      animation: __phz_bird_idle 2.2s ease-in-out infinite;
-      filter: drop-shadow(0 0 12px rgba(34, 197, 94, 0.9)) drop-shadow(0 0 6px rgba(255, 138, 0, 0.75));
+      animation: __phz_hero_idle 2.2s ease-in-out infinite;
+      filter: drop-shadow(0 0 12px rgba(37, 99, 235, 0.85)) drop-shadow(0 0 6px rgba(249, 115, 22, 0.75));
     }
-    @keyframes __phz_bird_idle {
-      0%, 100% { transform: translate(-50%, -50%) scale(1) rotate(-4deg); }
-      50%      { transform: translate(-50%, -50%) scale(1.12) rotate(4deg) translateY(-2px); }
+    @keyframes __phz_hero_idle {
+      0%, 100% { transform: translate(-50%, -50%) scale(1) rotate(-3deg); }
+      50%      { transform: translate(-50%, -50%) scale(1.1) rotate(3deg) translateY(-2px); }
+    }
+
+    #__phz_cursor.__phz_blast .glyph {
+      animation: __phz_hero_blast 0.22s ease-out !important;
+    }
+    @keyframes __phz_hero_blast {
+      0%   { transform: translate(-50%, -50%) scale(1.1); }
+      40%  { transform: translate(-50%, -50%) scale(1.35); filter: drop-shadow(0 0 20px #ffeb3b); }
+      100% { transform: translate(-50%, -50%) scale(1.05); }
+    }
+
+    /* ---- fireball (link / button click) ---- */
+    .__phz_fireball {
+      position: fixed; pointer-events: none; z-index: 2147483646;
+      width: 40px; height: 40px; border-radius: 50%;
+      background: radial-gradient(circle, #fff 0%, #ffeb3b 18%, #ff9800 50%, #ff5722 75%, transparent 100%);
+      box-shadow: 0 0 16px #ff9800, 0 0 32px #ff5722, 0 0 48px rgba(255, 87, 34, 0.55);
+      will-change: transform, opacity;
+      animation: __phz_fireball var(--dur, 0.65s) ease-in forwards;
+    }
+    @keyframes __phz_fireball {
+      0%   { transform: translate(-50%, -50%) scale(0.4); opacity: 1; }
+      75%  { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1.15); opacity: 1; }
+      100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(2); opacity: 0; }
+    }
+    .__phz_fireburst {
+      position: fixed; pointer-events: none; z-index: 2147483645;
+      width: 72px; height: 72px; border-radius: 50%;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(circle, rgba(255,235,59,0.95), rgba(255,87,34,0.55) 40%, transparent 72%);
+      box-shadow: 0 0 24px rgba(255, 152, 0, 0.6);
+      animation: __phz_fireburst 0.65s ease-out forwards;
+    }
+    @keyframes __phz_fireburst {
+      0%   { transform: translate(-50%, -50%) scale(0.15); opacity: 1; }
+      100% { transform: translate(-50%, -50%) scale(2.6); opacity: 0; }
     }
 
     /* ---- cursor trail sparkles ---- */
@@ -311,7 +343,7 @@
   `;
   (document.head || document.documentElement).appendChild(styleEl);
 
-  let trailLast = 0, idleTimer = null, smokeTimer = null;
+  let trailLast = 0, idleTimer = null, smokeTimer = null, blastTimer = null;
 
   function spawnTrail(x, y) {
     const p = document.createElement('div');
@@ -421,6 +453,54 @@
   }
 
   const CLICKABLE = 'a, button, [role="link"], [role="button"], input[type="submit"], input[type="button"], summary, label[for], [onclick]';
+  const FIREBALL_TARGETS = CLICKABLE;
+  const FIREBALL_MIN_DUR = 0.45;
+  const FIREBALL_MAX_DUR = 1.05;
+  const FIREBALL_SPEED = 420;   // px per second (lower = slower)
+
+  function heroBlast() {
+    if (!cursorEl) return;
+    cursorEl.classList.add('__phz_blast');
+    clearTimeout(blastTimer);
+    blastTimer = setTimeout(() => cursorEl.classList.remove('__phz_blast'), 220);
+  }
+
+  function spawnFireball(fromX, fromY, toX, toY) {
+    const dx = toX - fromX;
+    const dy = toY - fromY;
+    const dist = Math.hypot(dx, dy) || 1;
+    const dur = Math.min(FIREBALL_MAX_DUR, Math.max(FIREBALL_MIN_DUR, dist / FIREBALL_SPEED));
+
+    const fb = document.createElement('div');
+    fb.className = '__phz_fireball';
+    fb.style.left = fromX + 'px';
+    fb.style.top = fromY + 'px';
+    fb.style.setProperty('--dx', dx + 'px');
+    fb.style.setProperty('--dy', dy + 'px');
+    fb.style.setProperty('--dur', dur + 's');
+    document.body.appendChild(fb);
+
+    const burstDelay = (dur * 1000 * 0.78) | 0;
+    setTimeout(() => {
+      const burst = document.createElement('div');
+      burst.className = '__phz_fireburst';
+      burst.style.left = toX + 'px';
+      burst.style.top = toY + 'px';
+      document.body.appendChild(burst);
+      setTimeout(() => burst.remove(), 700);
+    }, burstDelay);
+
+    fb.addEventListener('animationend', () => fb.remove());
+  }
+
+  function onFireballClick(e) {
+    if (!enabled) return;
+    const target = e.target.closest && e.target.closest(FIREBALL_TARGETS);
+    if (!target) return;
+    heroBlast();
+    spawnFireball(mouseX, mouseY, e.clientX, e.clientY);
+  }
+
   function onOver(e) {
     if (!cursorEl || !enabled) return;
     const clickable = e.target.closest && e.target.closest(CLICKABLE);
@@ -437,6 +517,8 @@
       stopIdleSmoke();
       stopAutoScroll();
       clearTimeout(shootTimer);
+      clearTimeout(blastTimer);
+      if (cursorEl) cursorEl.classList.remove('__phz_blast');
     } else {
       scheduleShootingStar();
     }
@@ -546,12 +628,13 @@
     cursorEl.id = '__phz_cursor';
     glyphEl = document.createElement('div');
     glyphEl.className = 'glyph';
-    glyphEl.innerHTML = BIRD_SVG;
+    glyphEl.innerHTML = HERO_SVG;
     cursorEl.appendChild(glyphEl);
     document.body.appendChild(cursorEl);
 
     addEventListener('mousemove', onMove, { passive: true });
     addEventListener('mouseover', onOver, true);
+    addEventListener('mousedown', onFireballClick, true);
   }
 
   if (document.readyState === 'loading') {
