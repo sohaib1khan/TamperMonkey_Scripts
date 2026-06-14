@@ -17,7 +17,7 @@ These scripts apply a site-wide visual theme on matching pages (`*://*/*`). Each
 | Script | Summary |
 |--------|---------|
 | [Matrix Theme](theme/MatrixTheme.js) | Matrix-style code rain, glowing links, emoji cursor with a breathing effect over clickables, purple idle smoke, and double-tap Up/Down auto-scroll |
-| [Matrix Theme — Superhero Build](theme/MatrixTheme_Superhero.js) | Code rain plus a caped-hero cursor: movement tilt, idle breathing, click feedback, whip effect on links, rain flash on impact, id[...] |
+| [Matrix Theme — Superhero Build](theme/MatrixTheme_Superhero.js) | Code rain plus a caped-hero cursor: movement tilt, idle breathing, click feedback, whip effect on links, rain flash on impact |
 | [Purple Haze — Galaxy Build](theme/PurpleHaze_Retro.js) | Galaxy nebula background, starfield, Goku-style hero cursor, fireball effect on link and button clicks, idle smoke, and auto-scroll |
 
 ### Theme demo
