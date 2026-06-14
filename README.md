@@ -7,6 +7,7 @@ A collection of useful userscripts for Tampermonkey (and compatible managers). S
 | Path | Description |
 |------|-------------|
 | `theme/` | Universal page themes: visual styling, custom cursors, and lightweight interaction effects |
+| `assets/` | Supporting media for documentation and demos |
 
 Additional script categories may be added over time as the collection grows.
 
@@ -22,7 +23,13 @@ These scripts apply a site-wide visual theme on matching pages (`*://*/*`). Each
 
 ### Theme demo
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/CBf7S6pyqAQ" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+Watch the demo below directly in this README. GitHub does not support embedded YouTube players in README files, so the recording is hosted in this repository for inline playback.
+
+<video src="assets/theme-demo.mp4" controls width="100%">
+  Your browser does not support embedded video. Open <a href="assets/theme-demo.mp4">assets/theme-demo.mp4</a> or watch on <a href="https://youtu.be/CBf7S6pyqAQ">YouTube</a>.
+</video>
+
+Also available on YouTube: [https://youtu.be/CBf7S6pyqAQ](https://youtu.be/CBf7S6pyqAQ)
 
 ## Installation
 
@@ -36,3 +43,7 @@ These scripts apply a site-wide visual theme on matching pages (`*://*/*`). Each
 - **Toggle:** Press **Ctrl+Alt+M** to enable or disable an active theme without removing it.
 - **Auto-scroll:** Double-tap the **Up** or **Down** arrow key to start continuous scrolling in that direction; double-tap again, or press **Escape** or **Space**, to stop.
 - **iframes:** Theme scripts skip iframe contexts to avoid duplicate effects and reduce overhead.
+
+## Author
+
+Sohaib Khan — [github.com/sohaib1khan](https://github.com/sohaib1khan)
