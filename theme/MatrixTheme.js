@@ -1,9 +1,9 @@
 // ==UserScript==
-// @name         Matrix Theme — Cool Build
-// @namespace    https://github.com/yourname/matrix-theme
-// @version      0.3.0
-// @description  Matrix-inspired universal theme: code rain, framed images, glowing links, emoji hand cursor that breathes on clickables, purple idle smoke. Toggle on/off with Ctrl+Alt+M.
-// @author       you
+// @name         Matrix Theme 
+// @namespace    https://github.com/sohaib1khan/TamperMonkey_Scripts.git
+// @version      0.3.1
+// @description  Matrix-inspired universal theme: code rain, framed images, glowing links, emoji hand cursor that breathes on clickables, purple idle smoke, double-tap Up/Down auto-scroll. Toggle on/off with Ctrl+Alt+M.
+// @author       Sohaib Khan
 // @match        *://*/*
 // @run-at       document-start
 // @grant        none
@@ -19,6 +19,8 @@
   const GREEN = '#00ff9c';
   const GLYPHS = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン0123456789';
   const randGlyph = () => GLYPHS[(Math.random() * GLYPHS.length) | 0];
+  const AUTO_SCROLL_PX = 3;
+  const DOUBLE_TAP_MS = 450;
 
   let enabled = true;
   let mouseX = innerWidth / 2;
@@ -229,12 +231,85 @@
     styleEl.disabled = !on;
     canvas.style.display = on ? 'block' : 'none';
     if (cursorEl) cursorEl.style.display = on ? 'block' : 'none';
-    if (!on) stopIdleSmoke();
+    if (!on) {
+      stopIdleSmoke();
+      stopAutoScroll();
+    }
   }
 
-  addEventListener('keydown', (e) => {
-    if (e.ctrlKey && e.altKey && (e.key === 'm' || e.key === 'M')) setEnabled(!enabled);
-  });
+  // ---------- double-tap Up/Down auto-scroll ----------
+  let autoScrollDir = 0;
+  let autoScrollRaf = null;
+  let lastUpTap = 0;
+  let lastDownTap = 0;
+
+  function isEditableTarget(el) {
+    if (!el || !el.closest) return false;
+    const tag = el.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return true;
+    if (el.isContentEditable) return true;
+    return !!el.closest('[contenteditable="true"]');
+  }
+
+  function stopAutoScroll() {
+    autoScrollDir = 0;
+    if (autoScrollRaf) {
+      cancelAnimationFrame(autoScrollRaf);
+      autoScrollRaf = null;
+    }
+  }
+
+  function tickAutoScroll() {
+    if (!enabled || autoScrollDir === 0) {
+      autoScrollRaf = null;
+      return;
+    }
+    window.scrollBy(0, autoScrollDir * AUTO_SCROLL_PX);
+    autoScrollRaf = requestAnimationFrame(tickAutoScroll);
+  }
+
+  function startAutoScroll(dir) {
+    if (autoScrollDir === dir) {
+      stopAutoScroll();
+      return;
+    }
+    autoScrollDir = dir;
+    if (!autoScrollRaf) autoScrollRaf = requestAnimationFrame(tickAutoScroll);
+  }
+
+  function onKeyDown(e) {
+    if (e.ctrlKey && e.altKey && (e.key === 'm' || e.key === 'M')) {
+      setEnabled(!enabled);
+      return;
+    }
+    if (!enabled || isEditableTarget(e.target)) return;
+
+    if (e.key === 'Escape' || e.key === ' ') {
+      stopAutoScroll();
+      return;
+    }
+
+    const now = performance.now();
+    if (e.key === 'ArrowUp') {
+      if (now - lastUpTap < DOUBLE_TAP_MS) {
+        e.preventDefault();
+        startAutoScroll(-1);
+        lastUpTap = 0;
+      } else {
+        lastUpTap = now;
+      }
+    } else if (e.key === 'ArrowDown') {
+      if (now - lastDownTap < DOUBLE_TAP_MS) {
+        e.preventDefault();
+        startAutoScroll(1);
+        lastDownTap = 0;
+      } else {
+        lastDownTap = now;
+      }
+    }
+  }
+
+  addEventListener('keydown', onKeyDown);
 
   // ---------- boot ----------
   function init() {
