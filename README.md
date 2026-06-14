@@ -7,7 +7,6 @@ A collection of useful userscripts for Tampermonkey (and compatible managers). S
 | Path | Description |
 |------|-------------|
 | `theme/` | Universal page themes: visual styling, custom cursors, and lightweight interaction effects |
-| `assets/` | Supporting media for documentation and demos |
 
 Additional script categories may be added over time as the collection grows.
 
@@ -23,14 +22,11 @@ These scripts apply a site-wide visual theme on matching pages (`*://*/*`). Each
 
 ### Theme demo
 
-A screen recording of the themes in use is included in this repository:
+A screen recording of the themes in use is available on YouTube:
 
-- **File:** [`assets/theme-demo.mp4`](assets/theme-demo.mp4)
-- **Direct link (after push to GitHub):** [View or download on GitHub](https://github.com/sohaib1khan/TamperMonkey_Scripts/blob/main/assets/theme-demo.mp4)
+- **Watch:** [Theme demo on YouTube](https://youtu.be/CBf7S6pyqAQ)
 
-<video src="assets/theme-demo.mp4" controls width="100%">
-  Your browser does not support embedded video. Use the link above to open the demo file.
-</video>
+[![Theme demo video](https://img.youtube.com/vi/CBf7S6pyqAQ/hqdefault.jpg)](https://youtu.be/CBf7S6pyqAQ)
 
 ## Installation
 
