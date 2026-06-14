@@ -40,7 +40,3 @@ GitHub README files do not support embedded YouTube players (iframes are strippe
 - **Toggle:** Press **Ctrl+Alt+M** to enable or disable an active theme without removing it.
 - **Auto-scroll:** Double-tap the **Up** or **Down** arrow key to start continuous scrolling in that direction; double-tap again, or press **Escape** or **Space**, to stop.
 - **iframes:** Theme scripts skip iframe contexts to avoid duplicate effects and reduce overhead.
-
-## Author
-
-Sohaib Khan — [github.com/sohaib1khan](https://github.com/sohaib1khan)
